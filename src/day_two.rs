@@ -1,22 +1,24 @@
+use std::ops::RangeInclusive;
+
 fn process() {}
 
 fn parse_delimited_string(s: &str) -> Vec<&str> {
     s.split(',').collect()
 }
 
-fn compute_range(s: &str) -> Vec<u16> {
-    s.split('-').map(|str_num| str_num.parse::<u16>().expect("All inputs should parse to ints")).collect()
+fn compute_range(s: &str) -> RangeInclusive<u16> {
+    let mut iter = s.split('-');
+    let first = iter.next().expect("Must be two numbers per comma delimination").parse().expect("All inputs should parse to ints");
+    let last = iter.next().expect("Must be two numbers per comma delimination").parse().expect("All inputs should parse to ints");
+    first..=last
 }
 
 fn check_doubles() {}
 
 #[cfg(test)]
 mod tests {
-    use std::vec;
+    use super::*;
 
-use crate::day_two::compute_range;
-
-use super::parse_delimited_string;
 
     #[test]
     fn parse_sample_input() {
@@ -27,6 +29,6 @@ use super::parse_delimited_string;
     #[test]
     fn test_compute_range() {
         let input = "11-22";
-        assert_eq!(vec![11, 22], compute_range(input));
+        assert_eq!((11..=22), compute_range(input));
     }
 }
