@@ -1,6 +1,6 @@
 use std::ops::RangeInclusive;
 
-fn process_day_two(input: &str) -> u32 {
+pub fn process_day_two(input: &str) -> i64 {
     let string_ranges = parse_delimited_string(input);
     let ranges = string_ranges.into_iter().map(calculate_ranges);
     ranges.map(process_ranges).sum()
@@ -10,14 +10,14 @@ fn parse_delimited_string(s: &str) -> Vec<&str> {
     s.split(',').collect()
 }
 
-fn calculate_ranges(s: &str) -> RangeInclusive<u32> {
+fn calculate_ranges(s: &str) -> RangeInclusive<i64> {
     let mut iter = s.split('-');
     let first = iter.next().expect("Must be two numbers per comma delimination").parse().expect("All inputs should parse to ints");
     let last = iter.next().expect("Must be two numbers per comma delimination").parse().expect("All inputs should parse to ints");
     first..=last
 }
 
-fn process_ranges(range: RangeInclusive<u32>) -> u32 {
+fn process_ranges(range: RangeInclusive<i64>) -> i64 {
     range
         .filter(|num| contains_repeated_substr(num.to_string()))
         .sum()
