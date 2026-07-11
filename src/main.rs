@@ -13,9 +13,7 @@ fn main() -> Result<(), Box<dyn Error>> {
     count = process_puzzle_one(directions.clone(), position, count);
     println!("puzzle one {count}");
 
-    let position = 50;
-    let mut count = 0;
-    count = process_puzzle_two(directions, position, count);
+    count = process_puzzle_two(directions);
     println!("puzzle two {count}");
 
     Ok(())
