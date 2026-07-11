@@ -1,5 +1,5 @@
 use std::{error::Error, fs, path::Path};
-use advent_of_code_2025::{day_one::{Direction, process_puzzle_one, process_puzzle_two}, day_three::process_day_three_puzzle_one, day_two::{process_day_two, process_day_two_prob_two}};
+use advent_of_code_2025::{day_one::{Direction, process_puzzle_one, process_puzzle_two}, day_three::{process_day_three_puzzle_one, process_day_three_puzzle_two}, day_two::{process_day_two, process_day_two_prob_two}};
 
 fn main() -> Result<(), Box<dyn Error>> {
     println!("Hello, world!");
@@ -32,6 +32,10 @@ fn main() -> Result<(), Box<dyn Error>> {
         let file = fs::read_to_string(Path::new("./src/assets/day-three-input.txt"))?;
         let result = process_day_three_puzzle_one(file.trim().to_string());
         println!("day three - puzzle one {result}");
+
+        let file = fs::read_to_string(Path::new("./src/assets/day-three-input.txt"))?;
+        let result = process_day_three_puzzle_two(file.trim().to_string());
+        println!("day three - puzzle two {result}");
     }
 
     Ok(())
