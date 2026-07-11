@@ -1,5 +1,5 @@
 use std::{error::Error, fs, path::Path};
-use advent_of_code_2025::{Direction, process_puzzle_one};
+use advent_of_code_2025::{Direction, process_puzzle_one, process_puzzle_two};
 
 fn main() -> Result<(), Box<dyn Error>> {
     println!("Hello, world!");
@@ -10,8 +10,13 @@ fn main() -> Result<(), Box<dyn Error>> {
     let position = 50;
     let mut count = 0;
 
-    count = process_puzzle_one(directions, position, count);
+    count = process_puzzle_one(directions.clone(), position, count);
+    println!("puzzle one {count}");
 
-    println!("{count}");
+    let position = 50;
+    let mut count = 0;
+    count = process_puzzle_two(directions, position, count);
+    println!("puzzle two {count}");
+
     Ok(())
 }
