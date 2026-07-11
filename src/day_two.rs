@@ -7,7 +7,9 @@ pub fn process_day_two(input: &str) -> i64 {
 }
 
 pub fn process_day_two_prob_two(input: &str) -> i64 {
-    10
+    let string_ranges = parse_delimited_string(input);
+    let ranges = string_ranges.into_iter().map(calculate_ranges);
+    ranges.flatten().filter(|num| contains_any_length_repeated_substr(num.to_string())).sum()
 }
 
 fn parse_delimited_string(s: &str) -> Vec<&str> {
@@ -37,6 +39,21 @@ fn contains_repeated_substr(input: String) -> bool {
     first_half == second_half
 }
 
+fn contains_any_length_repeated_substr(s: String) -> bool {
+    let max_substr_length = s.len() / 2; // longest substr can be two pairs
+    // for a substr to be a possible match,
+    // the length of the string must be divisble by the substr length
+    let possible_substr_lengths: Vec<usize> = (1..=max_substr_length).filter(|num| s.len() % num == 0).collect();
+    possible_substr_lengths.into_iter()
+        .filter(|&substr_len| {
+            let mut chunks = s.as_bytes().chunks(substr_len);
+            let all_equal = match chunks.next() {
+                None => false,
+                Some(first) => chunks.all(|chunk| first == chunk)
+            };
+            all_equal
+        }).count() >= 1
+}
 
 #[cfg(test)]
 mod tests {
@@ -74,5 +91,13 @@ mod tests {
     #[test]
     fn test_process_puzzle_two() {
         assert_eq!(process_day_two_prob_two(FULL_INPUT), 4174379265);
+    }
+
+    #[test]
+    fn any_length_substr() {
+        assert!(contains_any_length_repeated_substr("101101".to_string()));
+        assert!(contains_any_length_repeated_substr("10001000".to_string()));
+        assert!(contains_any_length_repeated_substr("111".to_string()));
+        assert!(contains_any_length_repeated_substr("121212".to_string()));
     }
 }
