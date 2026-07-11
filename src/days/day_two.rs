@@ -30,7 +30,7 @@ fn process_ranges(range: RangeInclusive<i64>) -> i64 {
 }
 
 fn contains_repeated_substr(input: String) -> bool {
-    if input.len() % 2 != 0 {
+    if !input.len().is_multiple_of(2) {
         return false
     }
     let half_way_point = input.len() / 2;
@@ -43,15 +43,15 @@ fn contains_any_length_repeated_substr(s: String) -> bool {
     let max_substr_length = s.len() / 2; // longest substr can be two pairs
     // for a substr to be a possible match,
     // the length of the string must be divisble by the substr length
-    let possible_substr_lengths: Vec<usize> = (1..=max_substr_length).filter(|num| s.len() % num == 0).collect();
+    let possible_substr_lengths: Vec<usize> = (1..=max_substr_length).filter(|num| s.len().is_multiple_of(*num)).collect();
     possible_substr_lengths.into_iter()
         .filter(|&substr_len| {
             let mut chunks = s.as_bytes().chunks(substr_len);
-            let all_equal = match chunks.next() {
+            
+            match chunks.next() {
                 None => false,
                 Some(first) => chunks.all(|chunk| first == chunk)
-            };
-            all_equal
+            }
         }).count() >= 1
 }
 

@@ -22,10 +22,10 @@ fn main() -> Result<(), Box<dyn Error>> {
     // day two
     {
         let file = fs::read_to_string(Path::new("./src/assets/day-two-input.txt"))?;
-        let result = process_day_two(&file.trim());
+        let result = process_day_two(file.trim());
         println!("day two - puzzle one {result}");
 
-        let result = process_day_two_prob_two(&file.trim());
+        let result = process_day_two_prob_two(file.trim());
         println!("day two - puzzle two {result}");
     }
 

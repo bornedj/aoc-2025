@@ -7,10 +7,10 @@ pub enum Direction {
 pub fn direction(line: &str) -> Direction {
     if let Some(distance) = line.strip_prefix('L') {
         let distance = distance.parse::<i16>().expect("must be a parseable number input");
-        return Direction::Left(distance)
+        Direction::Left(distance)
     } else if let Some(distance) = line.strip_prefix('R') {
         let distance = distance.parse::<i16>().expect("must be a parseable number input");
-        return Direction::Right(distance)
+        Direction::Right(distance)
     } else {
         panic!("unexpected prefix")
     }
