@@ -16,3 +16,15 @@ pub fn direction(line: &str) -> Direction {
     }
 }
 
+pub fn process_puzzle_one(directions: Vec<Direction>, mut pos: i16, mut count: u16) -> u16 {
+    directions.iter().for_each(|direction| {
+        match direction {
+            Direction::Left(num) => pos = (pos - num).rem_euclid(100),
+            Direction::Right(num) => pos = (pos + num).rem_euclid(100)
+        };
+        if pos == 0 {
+            count += 1;
+        }
+    });
+    count
+}
