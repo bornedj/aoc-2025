@@ -29,6 +29,7 @@ fn main() -> Result<(), Box<dyn Error>> {
         println!("day two - puzzle two {result}");
     }
 
+    // day three
     {
         let file = fs::read_to_string(Path::new("./src/assets/day-three-input.txt"))?;
         let result = process_day_three_puzzle_one(file.trim().to_string());
@@ -37,6 +38,13 @@ fn main() -> Result<(), Box<dyn Error>> {
         let file = fs::read_to_string(Path::new("./src/assets/day-three-input.txt"))?;
         let result = process_day_three_puzzle_two(file.trim().to_string());
         println!("day three - puzzle two {result}");
+    }
+
+    // day four
+    {
+        let file = fs::read_to_string(Path::new("./src/assets/day-four-input.txt"))?;
+        let result = advent_of_code_2025::days::day_four::process_day_four_prob_one(&file);
+        println!("day four - puzzle one {result}");
     }
 
     Ok(())
