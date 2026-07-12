@@ -1,4 +1,4 @@
-use core::panic;
+use core::{fmt, panic};
 
 #[derive(Debug)]
 enum Token {
@@ -8,16 +8,29 @@ enum Token {
     Splitter
 }
 
+struct Grid(Vec<Vec<Token>>);
 
-
-pub fn puzzle_one(input: &str) -> u64 {
-    let board = parse_board(input);
-    todo!();
+impl fmt::Display for Grid {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        for row in &self.0 {
+            for token in row {
+                write!(f, "{token:?}, ")?;
+            }
+            writeln!(f)?
+        }
+        Ok(())
+    }
 }
 
-fn parse_board(input: &str) -> Vec<Vec<Token>> {
+pub fn puzzle_one(input: &str) -> u32 {
+    parse_board(input)
+}
+
+fn parse_board(input: &str) -> u32 {
     let mut beam_indices: Vec<usize> = Vec::new();
     let mut parsed_lines: Vec<Vec<Token>> = Vec::new();
+    let mut total_splits: u32 = 0;
+
     for line in input.lines() {
         let parsed_line: Vec<Token> = line.chars().enumerate().map(|(i, c)| {
             match c {
@@ -25,8 +38,27 @@ fn parse_board(input: &str) -> Vec<Vec<Token>> {
                     beam_indices.push(i);
                     Token::Start
                 },
-                '.' => Token::Empty,
-                '^' => Token::Splitter,
+                '.' => {
+                    if beam_indices.contains(&i) {
+                        return Token::Beam
+                    }
+                    Token::Empty
+                },
+                '^' => {
+                    if beam_indices.contains(&i) {
+                        total_splits += 1;
+                    }
+                    beam_indices = beam_indices.clone().into_iter().filter(|&index| index != i).collect();
+
+                    if i > 0 {
+                        beam_indices.push(i-1);
+                    }
+                    if i < line.len() - 1{
+                        beam_indices.push(i+1);
+                    }
+
+                    Token::Splitter
+                },
                 _ => panic!("unexpected char"),
 
             }
@@ -34,9 +66,11 @@ fn parse_board(input: &str) -> Vec<Vec<Token>> {
         parsed_lines.push(parsed_line);
     };
 
+    let grid = Grid(parsed_lines);
     println!("beam_indices: {:?}",beam_indices);
-    println!("{parsed_lines:?}");
-    todo!()
+    println!("{grid}");
+
+    total_splits
 }
 
 #[cfg(test)]

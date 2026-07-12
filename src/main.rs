@@ -70,5 +70,12 @@ fn main() -> Result<(), Box<dyn Error>> {
         println!("day six - puzzle two {result}")
     }
 
+    // day seven
+    {
+        let file = fs::read_to_string(Path::new("./src/assets/day-seven-input.txt"))?;
+        let result = advent_of_code_2025::days::day_seven::puzzle_one(&file);
+        println!("day seven - puzzle one {result}");
+    }
+
     Ok(())
 }
