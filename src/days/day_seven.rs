@@ -67,11 +67,36 @@ pub fn puzzle_one(input: &str) -> u32 {
         parsed_lines.push(parsed_line);
     }
 
-    let grid = Grid(parsed_lines);
-    println!("beam_indices: {:?}", beam_indices);
-    println!("{grid}");
-
     total_splits
+}
+
+pub fn puzzle_two(input: &str) -> u32  {
+    let grid = map_input_to_grid(input);
+    println!("{grid}");
+    todo!()
+}
+
+fn map_input_to_grid(input: &str) -> Grid {
+    let mut parsed_lines: Vec<Vec<Token>> = Vec::new();
+    for line in input.lines() {
+        let parsed_line: Vec<Token> = line
+            .chars()
+            .map(|c| match c {
+                'S' => {
+                    Token::Start
+                }
+                '.' => {
+                    Token::Empty
+                }
+                '^' => {
+                    Token::Splitter
+                }
+                _ => panic!("unexpected char"),
+            })
+            .collect();
+        parsed_lines.push(parsed_line);
+    }
+    Grid(parsed_lines)
 }
 
 #[cfg(test)]
@@ -98,5 +123,10 @@ mod tests {
     #[test]
     fn example_input() {
         assert_eq!(21, puzzle_one(EXAMPLE_INPUT))
+    }
+
+    #[test]
+    fn test_puzzle_two() {
+        assert_eq!(40, puzzle_two(EXAMPLE_INPUT));
     }
 }
