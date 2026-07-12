@@ -140,7 +140,7 @@ fn get_operations(rows: &mut Vec<&str>) -> Vec<Token> {
 }
 
 fn get_list_of_numbers_and_slices(rows: &mut Vec<&str>) -> (Vec<String>, Vec<Range<usize>>)  {
-    let rows: Vec<&[u8]> = rows.into_iter().map(|&mut str| str.as_bytes()).collect();
+    let rows: Vec<&[u8]> = rows.iter_mut().map(|&mut str| str.as_bytes()).collect();
     let width = rows[0].len();
 
     let mut ranges: Vec<Range<usize>> = Vec::new();

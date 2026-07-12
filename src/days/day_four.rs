@@ -109,17 +109,15 @@ fn count_neighbors(col_index: usize, row_index: usize, board: &Vec<Vec<Tile>>) -
     }
 
     // up and down checks
-    if col_index > 0 {
-        if let Tile::PaperRoll = board[col_index - 1][row_index] {
+    if col_index > 0
+        && let Tile::PaperRoll = board[col_index - 1][row_index] {
             count_paper_neighbors += 1;
         }
-    }
 
-    if col_index < board_height - 1 {
-        if let Tile::PaperRoll = board[col_index + 1][row_index] {
+    if col_index < board_height - 1
+        && let Tile::PaperRoll = board[col_index + 1][row_index] {
             count_paper_neighbors += 1;
         }
-    }
 
     count_paper_neighbors < 4
 }
@@ -141,8 +139,8 @@ fn transform_line_to_tile(s: &str) -> Vec<Tile> {
 
 fn char_to_tile(c: char) -> Tile {
     match c {
-        '@' => return Tile::PaperRoll,
-        '.' => return Tile::Empty,
+        '@' => Tile::PaperRoll,
+        '.' => Tile::Empty,
         _ => panic!("Should only be the above cases"),
     }
 }
