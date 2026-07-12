@@ -5,7 +5,7 @@ enum Token {
     Start,
     Empty,
     Beam,
-    Splitter
+    Splitter,
 }
 
 struct Grid(Vec<Vec<Token>>);
@@ -28,42 +28,47 @@ pub fn puzzle_one(input: &str) -> u32 {
     let mut total_splits: u32 = 0;
 
     for line in input.lines() {
-        let parsed_line: Vec<Token> = line.chars().enumerate().map(|(i, c)| {
-            match c {
+        let parsed_line: Vec<Token> = line
+            .chars()
+            .enumerate()
+            .map(|(i, c)| match c {
                 'S' => {
                     beam_indices.push(i);
                     Token::Start
-                },
+                }
                 '.' => {
                     if beam_indices.contains(&i) {
-                        return Token::Beam
+                        return Token::Beam;
                     }
                     Token::Empty
-                },
+                }
                 '^' => {
                     if beam_indices.contains(&i) {
                         total_splits += 1;
                     }
-                    beam_indices = beam_indices.clone().into_iter().filter(|&index| index != i).collect();
+                    beam_indices = beam_indices
+                        .clone()
+                        .into_iter()
+                        .filter(|&index| index != i)
+                        .collect();
 
                     if i > 0 {
-                        beam_indices.push(i-1);
+                        beam_indices.push(i - 1);
                     }
-                    if i < line.len() - 1{
-                        beam_indices.push(i+1);
+                    if i < line.len() - 1 {
+                        beam_indices.push(i + 1);
                     }
 
                     Token::Splitter
-                },
+                }
                 _ => panic!("unexpected char"),
-
-            }
-        }).collect();
+            })
+            .collect();
         parsed_lines.push(parsed_line);
-    };
+    }
 
     let grid = Grid(parsed_lines);
-    println!("beam_indices: {:?}",beam_indices);
+    println!("beam_indices: {:?}", beam_indices);
     println!("{grid}");
 
     total_splits
