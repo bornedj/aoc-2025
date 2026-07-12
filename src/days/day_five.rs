@@ -59,7 +59,7 @@ fn parse_input(input: &str) -> (Vec<RangeInclusive<u64>>, Vec<u64>) {
         if line.contains('-') {
             let range = transform_line_to_range(line);
             ranges.push(range);
-        } else if line.len() > 0 {
+        } else if !line.is_empty() {
             let ingredient = line.parse::<u64>().expect("expected number");
             ingredients.push(ingredient);
         }
