@@ -10,10 +10,19 @@ pub fn process_puzzle_one(input: &str) -> u64 {
         .pop()
         .expect("Expected operators row at the end");
 
-    iterate_operators(&operators, &home_work_sheet)
+    iterate_operators(&operators, &home_work_sheet, add_col, multiply_col)
 }
 
-fn iterate_operators(operators: &Vec<Token>, sheet: &Vec<Vec<Token>>) -> u64 {
+pub fn process_puzzle_two(input: &str) -> u64 {
+    let mut home_work_sheet = parse_input(input);
+    let operators = home_work_sheet
+        .pop()
+        .expect("Expected operators row at the end");
+
+    iterate_operators(&operators, &home_work_sheet, vertical_add_col, vertical_multiply_col)
+}
+
+fn iterate_operators(operators: &Vec<Token>, sheet: &Vec<Vec<Token>>, add_fn: fn(&Vec<&Token>) -> u64, multiply_fn: fn(&Vec<&Token>) -> u64) -> u64 {
     let mut total = 0;
 
     for (i, operator) in operators.iter().enumerate() {
@@ -22,8 +31,8 @@ fn iterate_operators(operators: &Vec<Token>, sheet: &Vec<Vec<Token>>) -> u64 {
             Token::Operator(op) => {
                 let col = extract_col(sheet, i);
                 match op {
-                    '*' => total += multiply_col(&col),
-                    '+' => total += add_col(&col),
+                    '*' => total += multiply_fn(&col),
+                    '+' => total += add_fn(&col),
                     _ => panic!("Unknown operator: {}", op),
                 }
             }
@@ -46,11 +55,11 @@ fn add_col(col: &Vec<&Token>) -> u64 {
     })
 }
 
-fn vertical_multiply_col(col: &Vec<&Token>) {
+fn vertical_multiply_col(col: &Vec<&Token>) -> u64 {
     todo!()
 }
 
-fn vertical_add_col(col: &Vec<&Token>) {
+fn vertical_add_col(col: &Vec<&Token>) -> u64 {
     todo!()
 }
 
