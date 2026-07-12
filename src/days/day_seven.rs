@@ -23,10 +23,6 @@ impl fmt::Display for Grid {
 }
 
 pub fn puzzle_one(input: &str) -> u32 {
-    parse_board(input)
-}
-
-fn parse_board(input: &str) -> u32 {
     let mut beam_indices: Vec<usize> = Vec::new();
     let mut parsed_lines: Vec<Vec<Token>> = Vec::new();
     let mut total_splits: u32 = 0;
