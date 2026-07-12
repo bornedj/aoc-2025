@@ -45,6 +45,9 @@ fn main() -> Result<(), Box<dyn Error>> {
         let file = fs::read_to_string(Path::new("./src/assets/day-four-input.txt"))?;
         let result = advent_of_code_2025::days::day_four::process_day_four_prob_one(&file);
         println!("day four - puzzle one {result}");
+
+        let result = advent_of_code_2025::days::day_four::process_day_four_puzzle_two(&file);
+        println!("day four - puzzle two {result}");
     }
 
     Ok(())
