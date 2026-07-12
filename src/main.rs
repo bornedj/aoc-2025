@@ -1,6 +1,6 @@
 use std::{error::Error, fs, path::Path};
 
-use advent_of_code_2025::days::{day_one::{Direction, process_puzzle_one, process_puzzle_two}, day_three::{process_day_three_puzzle_one, process_day_three_puzzle_two}, day_two::{process_day_two, process_day_two_prob_two}};
+use advent_of_code_2025::days::day_one::Direction;
 
 fn main() -> Result<(), Box<dyn Error>> {
     println!("Hello, world!");
@@ -12,31 +12,31 @@ fn main() -> Result<(), Box<dyn Error>> {
 
         let mut count;
 
-        count = process_puzzle_one(directions.clone());
+        count = advent_of_code_2025::days::day_one::process_puzzle_one(directions.clone());
         println!("day one - puzzle one {count}");
 
-        count = process_puzzle_two(directions);
+        count = advent_of_code_2025::days::day_one::process_puzzle_two(directions);
         println!("day one - puzzle two {count}");
     }
 
     // day two
     {
         let file = fs::read_to_string(Path::new("./src/assets/day-two-input.txt"))?;
-        let result = process_day_two(file.trim());
+        let result = advent_of_code_2025::days::day_two::process_day_two(file.trim());
         println!("day two - puzzle one {result}");
 
-        let result = process_day_two_prob_two(file.trim());
+        let result = advent_of_code_2025::days::day_two::process_day_two_prob_two(file.trim());
         println!("day two - puzzle two {result}");
     }
 
     // day three
     {
         let file = fs::read_to_string(Path::new("./src/assets/day-three-input.txt"))?;
-        let result = process_day_three_puzzle_one(file.trim().to_string());
+        let result = advent_of_code_2025::days::day_three::process_day_three_puzzle_one(file.trim().to_string());
         println!("day three - puzzle one {result}");
 
         let file = fs::read_to_string(Path::new("./src/assets/day-three-input.txt"))?;
-        let result = process_day_three_puzzle_two(file.trim().to_string());
+        let result = advent_of_code_2025::days::day_three::process_day_three_puzzle_two(file.trim().to_string());
         println!("day three - puzzle two {result}");
     }
 
@@ -58,6 +58,13 @@ fn main() -> Result<(), Box<dyn Error>> {
 
         let result = advent_of_code_2025::days::day_five::puzzle_two(&file);
         println!("day five - puzzle two {result}");
+    }
+
+    // day six
+    {
+        let file = fs::read_to_string(Path::new("./src/assets/day-six-input.txt"))?;
+        let result = advent_of_code_2025::days::day_six::process_puzzle_one(&file);
+        println!("day six - puzzle one {result}");
     }
 
     Ok(())
