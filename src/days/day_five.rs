@@ -1,5 +1,5 @@
 use std::thread;
-use std::{collections::HashSet, ops::RangeInclusive};
+use std::ops::RangeInclusive;
 use std::sync::mpsc;
 
 pub fn puzzle_one(input: &str) -> usize {
