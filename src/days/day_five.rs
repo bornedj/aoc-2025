@@ -40,7 +40,6 @@ fn threaded_parse(input: &str) -> Vec<RangeInclusive<u64>> {
             s.spawn(move || {
                 if line.contains('-') {
                     let range = transform_line_to_range(line);
-                    println!("sending range {:?}", range);
                     tx_clone.send(range).expect("Failed to send vec range");
                 }
             });

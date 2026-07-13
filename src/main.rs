@@ -3,8 +3,6 @@ use std::{error::Error, fs, path::Path};
 use advent_of_code_2025::days::day_one::Direction;
 
 fn main() -> Result<(), Box<dyn Error>> {
-    println!("Hello, world!");
-
     // day one
     {
         let file = fs::read_to_string(Path::new("/home/daniel/github/advent-of-code-2025/src/assets/day-one-puzzle-one-input.txt"))?;
@@ -75,6 +73,9 @@ fn main() -> Result<(), Box<dyn Error>> {
         let file = fs::read_to_string(Path::new("./src/assets/day-seven-input.txt"))?;
         let result = advent_of_code_2025::days::day_seven::puzzle_one(&file);
         println!("day seven - puzzle one {result}");
+
+        let result = advent_of_code_2025::days::day_seven::puzzle_two(&file);
+        println!("day seven - puzzle two {result}");
     }
 
     Ok(())
