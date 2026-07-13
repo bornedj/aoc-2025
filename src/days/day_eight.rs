@@ -17,12 +17,6 @@ impl ComputeDistance for Coordinate {
     }
 }
 
-// impl std::hash::Hash for Coordinate {
-//     fn hash<H: std::hash::Hasher>(&self, state: &mut H) {
-//         
-//     }
-// }
-
 pub fn puzzle_one(input: &str) -> u32 {
     let coordinates = map_input_to_coordinates(input);
     let mut distance_map: HashMap<(Coordinate, Coordinate), f64> = HashMap::new();
