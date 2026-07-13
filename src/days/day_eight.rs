@@ -1,8 +1,10 @@
-#[derive(Debug)]
+use std::collections::HashMap;
+
+#[derive(Debug, PartialEq, Hash, Eq, Copy, Clone)]
 struct Coordinate {
-    x: f64,
-    y: f64,
-    z: f64
+    x: i32,
+    y: i32,
+    z: i32
 }
 
 trait ComputeDistance {
@@ -11,21 +13,30 @@ trait ComputeDistance {
 
 impl ComputeDistance for Coordinate {
     fn compute_distance(&self, other: &Self) -> f64 {
-        let exponent: f64 = 2 as f64;
-        f64::sqrt((other.x - self.x).powf(exponent) + (other.y - self.y).powf(exponent) + (other.z - self.z).powf(exponent))
+        f64::sqrt(((other.x - self.x).pow(2) + (other.y - self.y).pow(2) + (other.z - self.z).pow(2)).into())
     }
 }
 
+// impl std::hash::Hash for Coordinate {
+//     fn hash<H: std::hash::Hasher>(&self, state: &mut H) {
+//         
+//     }
+// }
+
 pub fn puzzle_one(input: &str) -> u32 {
     let coordinates = map_input_to_coordinates(input);
-    let min_distance = coordinates[1..]
-        .iter()
-        .map(|coord| coord.compute_distance(&coordinates[0]) as u64)
-        .min()
-        .unwrap();
+    let mut distance_map: HashMap<(Coordinate, Coordinate), f64> = HashMap::new();
 
-    println!("{coordinates:?}");
-    println!("minimum distance from first coord: {min_distance}");
+    for i in 0..coordinates.len() {
+        for coord in &coordinates {
+            if coord != &coordinates[i] {
+                let distance: f64 = coord.compute_distance(&coordinates[i]);
+                distance_map.insert((coordinates[i], *coord), distance);
+            }
+        }
+    }
+
+    println!("{distance_map:?}");
     todo!()
 }
 
@@ -33,13 +44,13 @@ fn map_input_to_coordinates(input: &str) -> Vec<Coordinate> {
     input.lines()
         .map(|line| {
             let mut parts = line.split(',');
-            let x = parts.next().unwrap().parse::<u32>().expect("Must be a number");
-            let y = parts.next().unwrap().parse::<u32>().expect("Must be a number");
-            let z = parts.next().unwrap().parse::<u32>().expect("Must be a number");
+            let x = parts.next().unwrap().parse::<i32>().expect("Must be a number");
+            let y = parts.next().unwrap().parse::<i32>().expect("Must be a number");
+            let z = parts.next().unwrap().parse::<i32>().expect("Must be a number");
             Coordinate {
-                x: x as f64, 
-                y: y as f64,
-                z: z as f64,
+                x, 
+                y,
+                z,
             }
         })
         .collect()
