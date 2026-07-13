@@ -1,6 +1,7 @@
 use core::{fmt, panic};
+use std::collections::HashMap;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 enum Token {
     Start,
     Empty,
@@ -70,10 +71,12 @@ pub fn puzzle_one(input: &str) -> u32 {
     total_splits
 }
 
-pub fn puzzle_two(input: &str) -> u32  {
+pub fn puzzle_two(input: &str) -> u64  {
     let grid = map_input_to_grid(input);
-    println!("{grid}");
-    todo!()
+    let mut memoization: HashMap<(usize, usize), u64> = HashMap::new();
+    let starting_col = grid.0[0].iter().position(|token| token == &Token::Start).expect("Must be starter in first row");
+
+    compute_timelines(&grid, 1, starting_col, &mut memoization)
 }
 
 fn map_input_to_grid(input: &str) -> Grid {
@@ -97,6 +100,30 @@ fn map_input_to_grid(input: &str) -> Grid {
         parsed_lines.push(parsed_line);
     }
     Grid(parsed_lines)
+}
+
+fn compute_timelines(grid: &Grid, row: usize, col: usize, memo: &mut HashMap<(usize, usize), u64>) -> u64 {
+    if let Some(&value) = memo.get(&(row, col)) {
+        return value;
+    }
+
+    // beam leaving bottom
+    if row + 1 >= grid.0.len() {
+        return 1;
+    }
+
+    let result = match grid.0[row + 1][col] {
+        // going down
+        Token::Empty => compute_timelines(grid, row+1, col, memo),
+        // split to either side
+        Token::Splitter => {
+            compute_timelines(grid, row+1, col-1, memo) + compute_timelines(grid, row + 1, col + 1, memo)
+        },
+        _ => 1, // off the grid
+    };
+
+    memo.insert((row, col), result);
+    result
 }
 
 #[cfg(test)]
