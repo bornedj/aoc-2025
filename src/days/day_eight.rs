@@ -20,13 +20,13 @@ impl ComputeDistance for Coordinate {
     }
 }
 
-pub fn puzzle_one(input: &str) -> u32 {
+pub fn puzzle_one(input: &str, junction_count: usize) -> u32 {
     let coordinates = map_input_to_coordinates(input);
     let sorted_coord_distance = coordinates_vec_to_sorted_distance_vec(&coordinates);
     let mut circuits = create_circuits(sorted_coord_distance);
 
     circuits.sort_by(|a,b| b.len().cmp(&a.len()));
-    circuits.iter().take(3).map(|circuit| circuit.len() as u32).product()
+    circuits.iter().take(junction_count).map(|circuit| circuit.len() as u32).product()
 }
 
 fn create_circuits<'a>(
@@ -139,6 +139,6 @@ mod tests {
 
     #[test]
     fn test_puzzle_one() {
-        assert_eq!(40, puzzle_one(EXAMPLE_INPUT));
+        assert_eq!(40, puzzle_one(EXAMPLE_INPUT, 3));
     }
 }
