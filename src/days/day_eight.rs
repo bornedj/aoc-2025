@@ -17,21 +17,32 @@ impl ComputeDistance for Coordinate {
     }
 }
 
+
 pub fn puzzle_one(input: &str) -> u32 {
     let coordinates = map_input_to_coordinates(input);
-    let mut distance_map: HashMap<(Coordinate, Coordinate), f64> = HashMap::new();
+    let distance_map = coordinates_vec_to_distance_map(&coordinates);
 
-    for i in 0..coordinates.len() {
-        for coord in &coordinates {
-            if coord != &coordinates[i] {
-                let distance: f64 = coord.compute_distance(&coordinates[i]);
-                distance_map.insert((coordinates[i], *coord), distance);
-            }
-        }
-    }
 
     println!("{distance_map:?}");
     todo!()
+}
+
+fn coordinates_vec_to_distance_map<'a >(coordinates: &'a Vec<Coordinate>) -> HashMap<(&'a Coordinate, &'a Coordinate), f64> {
+    let mut distance_map: HashMap<(&Coordinate, &Coordinate), f64> = HashMap::new();
+    for i in 0..coordinates.len() {
+        for coord in coordinates {
+            if coord != &coordinates[i] {
+                let distance: f64 = coord.compute_distance(&coordinates[i]);
+
+                if !distance_map.contains_key(&(&coordinates[i], coord)) && 
+                    !distance_map.contains_key(&(coord, &coordinates[i]))
+                {
+                    distance_map.insert((&coordinates[i], coord), distance);
+                }
+            }
+        }
+    }
+    distance_map
 }
 
 fn map_input_to_coordinates(input: &str) -> Vec<Coordinate> {
