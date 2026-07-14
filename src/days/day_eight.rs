@@ -4,7 +4,7 @@ use std::collections::HashMap;
 struct Coordinate {
     x: i32,
     y: i32,
-    z: i32
+    z: i32,
 }
 
 trait ComputeDistance {
@@ -13,50 +13,100 @@ trait ComputeDistance {
 
 impl ComputeDistance for Coordinate {
     fn compute_distance(&self, other: &Self) -> f64 {
-        f64::sqrt(((other.x - self.x).pow(2) + (other.y - self.y).pow(2) + (other.z - self.z).pow(2)).into())
+        f64::sqrt(
+            ((other.x - self.x).pow(2) + (other.y - self.y).pow(2) + (other.z - self.z).pow(2))
+                .into(),
+        )
     }
 }
 
-
 pub fn puzzle_one(input: &str) -> u32 {
     let coordinates = map_input_to_coordinates(input);
-    let distance_map = coordinates_vec_to_distance_map(&coordinates);
+    let sorted_coord_distance = coordinates_vec_to_sorted_distance_vec(&coordinates);
+    let mut circuits = create_circuits(sorted_coord_distance);
 
-
-    println!("{distance_map:?}");
-    todo!()
+    circuits.sort_by(|a,b| b.len().cmp(&a.len()));
+    circuits.iter().take(3).map(|circuit| circuit.len() as u32).product()
 }
 
-fn coordinates_vec_to_distance_map<'a >(coordinates: &'a Vec<Coordinate>) -> HashMap<(&'a Coordinate, &'a Coordinate), f64> {
+fn create_circuits<'a>(
+    sorted_coord_distance: Vec<((&'a Coordinate, &'a Coordinate), f64)>,
+) -> Vec<Vec<&'a Coordinate>> {
+    let mut curcuits: Vec<Vec<&'a Coordinate>> = vec![Vec::new()];
+    sorted_coord_distance
+        .iter()
+        .take(10)
+        .for_each(|(coords, _)| {
+            if curcuits[0].is_empty() {
+                curcuits[0].push(coords.0);
+                curcuits[0].push(coords.1);
+            } else {
+                match curcuits.iter_mut().find(|circuit| circuit.contains(&coords.1) || circuit.contains(&coords.0)) {
+                    Some(vec) => {
+                        if vec.contains(&coords.0) {
+                            vec.push(coords.1);
+                        } else {
+                            vec.push(coords.0);
+                        }
+                    },
+                    None => {
+                        let new_circuit = vec![coords.0, coords.1];
+                        curcuits.push(new_circuit);
+                    },
+                }
+            }
+        });
+    curcuits
+}
+
+fn coordinates_vec_to_sorted_distance_vec<'a>(
+    coordinates: &'a Vec<Coordinate>,
+) -> Vec<((&'a Coordinate, &'a Coordinate), f64)> {
     let mut distance_map: HashMap<(&Coordinate, &Coordinate), f64> = HashMap::new();
     for i in 0..coordinates.len() {
         for coord in coordinates {
             if coord != &coordinates[i] {
                 let distance: f64 = coord.compute_distance(&coordinates[i]);
 
-                if !distance_map.contains_key(&(&coordinates[i], coord)) && 
-                    !distance_map.contains_key(&(coord, &coordinates[i]))
+                if !distance_map.contains_key(&(&coordinates[i], coord))
+                    && !distance_map.contains_key(&(coord, &coordinates[i]))
                 {
                     distance_map.insert((&coordinates[i], coord), distance);
                 }
             }
         }
     }
-    distance_map
+
+    // sorting iter by string length
+    let mut vec_map: Vec<((&Coordinate, &Coordinate), f64)> = distance_map
+        .iter()
+        .map(|(&coords, &distance)| (coords, distance))
+        .collect();
+    vec_map.sort_by(|a, b| a.1.total_cmp(&b.1));
+    vec_map
 }
 
 fn map_input_to_coordinates(input: &str) -> Vec<Coordinate> {
-    input.lines()
+    input
+        .lines()
         .map(|line| {
             let mut parts = line.split(',');
-            let x = parts.next().unwrap().parse::<i32>().expect("Must be a number");
-            let y = parts.next().unwrap().parse::<i32>().expect("Must be a number");
-            let z = parts.next().unwrap().parse::<i32>().expect("Must be a number");
-            Coordinate {
-                x, 
-                y,
-                z,
-            }
+            let x = parts
+                .next()
+                .unwrap()
+                .parse::<i32>()
+                .expect("Must be a number");
+            let y = parts
+                .next()
+                .unwrap()
+                .parse::<i32>()
+                .expect("Must be a number");
+            let z = parts
+                .next()
+                .unwrap()
+                .parse::<i32>()
+                .expect("Must be a number");
+            Coordinate { x, y, z }
         })
         .collect()
 }
