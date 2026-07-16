@@ -13,10 +13,15 @@ trait ComputeDistance {
 
 impl ComputeDistance for Coordinate {
     fn compute_distance(&self, other: &Self) -> f64 {
-        f64::sqrt(
-            ((other.x - self.x).pow(2) + (other.y - self.y).pow(2) + (other.z - self.z).pow(2))
-                .into(),
-        )
+        let floating_self_x = f64::from(self.x);
+        let floating_self_y = f64::from(self.y);
+        let floating_self_z = f64::from(self.z);
+        let floating_other_x = f64::from(other.x);
+        let floating_other_y = f64::from(other.y);
+        let floating_other_z = f64::from(other.z);
+
+        let exponent: f64 = f64::from(2);
+        ((floating_self_x - floating_other_x).powf(exponent) + (floating_self_y - floating_other_y).powf(exponent) + (floating_self_z - floating_other_z).powf(exponent)).sqrt()
     }
 }
 
@@ -26,6 +31,7 @@ pub fn puzzle_one(input: &str, junction_count: usize) -> u32 {
     let mut circuits = create_circuits(sorted_coord_distance);
 
     circuits.sort_by(|a,b| b.len().cmp(&a.len()));
+    println!("{:?}", &circuits);
     circuits.iter().take(junction_count).map(|circuit| circuit.len() as u32).product()
 }
 
