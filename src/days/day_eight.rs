@@ -216,6 +216,6 @@ mod tests {
 
     #[test]
     fn test_puzzle_two() {
-        assert_eq!(25272i32, puzzle_two(EXAMPLE_INPUT));
+        assert_eq!(25272, puzzle_two(EXAMPLE_INPUT));
     }
 }
