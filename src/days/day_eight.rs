@@ -31,7 +31,7 @@ pub fn puzzle_one(input: &str, junction_count: usize) -> u32 {
     let mut circuits = create_circuits(sorted_coord_distance);
 
     circuits.sort_by(|a,b| b.len().cmp(&a.len()));
-    println!("{:?}", &circuits);
+    println!("{:?}", circuits);
     circuits.iter().take(junction_count).map(|circuit| circuit.len() as u32).product()
 }
 
@@ -65,9 +65,9 @@ fn create_circuits<'a>(
     curcuits
 }
 
-fn coordinates_vec_to_sorted_distance_vec<'a>(
-    coordinates: &'a Vec<Coordinate>,
-) -> Vec<((&'a Coordinate, &'a Coordinate), f64)> {
+fn coordinates_vec_to_sorted_distance_vec(
+    coordinates: &Vec<Coordinate>,
+) -> Vec<((&Coordinate, &Coordinate), f64)> {
     let mut distance_map: HashMap<(&Coordinate, &Coordinate), f64> = HashMap::new();
     for i in 0..coordinates.len() {
         for coord in coordinates {
