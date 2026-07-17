@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::{collections::HashMap, usize};
 
 #[derive(Debug, PartialEq, Hash, Eq, Copy, Clone)]
 struct Coordinate {
@@ -28,41 +28,56 @@ impl ComputeDistance for Coordinate {
 pub fn puzzle_one(input: &str, junction_count: usize) -> u32 {
     let coordinates = map_input_to_coordinates(input);
     let sorted_coord_distance = coordinates_vec_to_sorted_distance_vec(&coordinates);
-    let mut circuits = create_circuits(sorted_coord_distance);
+    let circuits = create_circuits(sorted_coord_distance);
 
-    circuits.sort_by(|a,b| b.len().cmp(&a.len()));
-    println!("{:?}", circuits);
-    circuits.iter().take(junction_count).map(|circuit| circuit.len() as u32).product()
+    let mut counts: Vec<usize> = circuits.values().fold(HashMap::new(), |mut acc, &id| {
+        *acc.entry(id).or_insert(0) += 1;
+        acc
+    })
+    .into_values()
+    .collect();
+
+    counts.sort_by(|a,b| b.cmp(&a));
+    counts.iter().take(junction_count).map(|&count| count as u32).product()
 }
 
 fn create_circuits<'a>(
     sorted_coord_distance: Vec<((&'a Coordinate, &'a Coordinate), f64)>,
-) -> Vec<Vec<&'a Coordinate>> {
-    let mut curcuits: Vec<Vec<&'a Coordinate>> = vec![Vec::new()];
+) -> HashMap<&'a Coordinate, usize> {
+    let mut circuits: HashMap<&'a Coordinate, usize> = HashMap::new();
+
     sorted_coord_distance
         .iter()
         .take(10)
         .for_each(|(coords, _)| {
-            if curcuits[0].is_empty() {
-                curcuits[0].push(coords.0);
-                curcuits[0].push(coords.1);
-            } else {
-                match curcuits.iter_mut().find(|circuit| circuit.contains(&coords.1) || circuit.contains(&coords.0)) {
-                    Some(vec) => {
-                        if vec.contains(&coords.0) {
-                            vec.push(coords.1);
-                        } else {
-                            vec.push(coords.0);
+            let zero_index = circuits.get(coords.0).copied();
+            let one_index = circuits.get(coords.1).copied();
+            match (zero_index, one_index) {
+                (None, None) => {
+                    if let Some(max_index) = circuits.values().max().copied() {
+                        circuits.insert(coords.0, max_index + 1);
+                        circuits.insert(coords.1, max_index + 1);
+                    } else {
+                        circuits.insert(coords.0, 0);
+                        circuits.insert(coords.1, 0);
+                    }
+                },
+                (Some(zero_index), None) => {
+                    circuits.insert(coords.1, zero_index);
+                },
+                (None, Some(one_index)) => {
+                    circuits.insert(coords.0, one_index);
+                },
+                (Some(zero_index), Some(one_index)) => {
+                    for circuit_id in circuits.values_mut() {
+                        if circuit_id == &zero_index {
+                            *circuit_id = one_index;
                         }
-                    },
-                    None => {
-                        let new_circuit = vec![coords.0, coords.1];
-                        curcuits.push(new_circuit);
-                    },
+                    }
                 }
             }
         });
-    curcuits
+    circuits
 }
 
 fn coordinates_vec_to_sorted_distance_vec(
