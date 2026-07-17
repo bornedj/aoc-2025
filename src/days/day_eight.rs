@@ -28,7 +28,7 @@ impl ComputeDistance for Coordinate {
 pub fn puzzle_one(input: &str, junction_count: usize) -> u32 {
     let coordinates = map_input_to_coordinates(input);
     let sorted_coord_distance = coordinates_vec_to_sorted_distance_vec(&coordinates);
-    let circuits = create_circuits(sorted_coord_distance);
+    let circuits = create_circuits(sorted_coord_distance, junction_count);
 
     let mut counts: Vec<usize> = circuits.values().fold(HashMap::new(), |mut acc, &id| {
         *acc.entry(id).or_insert(0) += 1;
@@ -38,17 +38,18 @@ pub fn puzzle_one(input: &str, junction_count: usize) -> u32 {
     .collect();
 
     counts.sort_by(|a,b| b.cmp(&a));
-    counts.iter().take(junction_count).map(|&count| count as u32).product()
+    counts.iter().take(3).map(|&count| count as u32).product()
 }
 
 fn create_circuits<'a>(
     sorted_coord_distance: Vec<((&'a Coordinate, &'a Coordinate), f64)>,
+    junction_count: usize
 ) -> HashMap<&'a Coordinate, usize> {
     let mut circuits: HashMap<&'a Coordinate, usize> = HashMap::new();
 
     sorted_coord_distance
         .iter()
-        .take(10)
+        .take(junction_count)
         .for_each(|(coords, _)| {
             let zero_index = circuits.get(coords.0).copied();
             let one_index = circuits.get(coords.1).copied();
@@ -98,7 +99,7 @@ fn coordinates_vec_to_sorted_distance_vec(
         }
     }
 
-    // sorting iter by string length
+    // sorting iter by distance
     let mut vec_map: Vec<((&Coordinate, &Coordinate), f64)> = distance_map
         .iter()
         .map(|(&coords, &distance)| (coords, distance))
@@ -160,6 +161,6 @@ mod tests {
 
     #[test]
     fn test_puzzle_one() {
-        assert_eq!(40, puzzle_one(EXAMPLE_INPUT, 3));
+        assert_eq!(40, puzzle_one(EXAMPLE_INPUT, 10));
     }
 }
