@@ -91,8 +91,11 @@ fn main() -> Result<(), Box<dyn Error>> {
     // day nine
     {
         let file = fs::read_to_string(Path::new("./src/assets/day-nine-input.txt"))?;
-        let result = advent_of_code_2025::days::day_nine::puzzle_one(&file);
+        let result = advent_of_code_2025::days::day_nine::puzz_one::puzzle_one(&file);
         println!("day nine - puzzle one {result}");
+
+        let result = advent_of_code_2025::days::day_nine::puzzle_two(&file);
+        println!("day nine - puzzle two {result}");
     }
     Ok(())
 }
