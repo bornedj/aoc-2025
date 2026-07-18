@@ -79,7 +79,7 @@ fn find_last_junction<'a>(
         let first = circuit_map.values().next().unwrap();
         if all_coordinates.iter().all(|coord| {
             if let Some(index) = circuit_map.get(coord) {
-                return index == first;
+                index == first
             } else {
                 false
             }
@@ -154,7 +154,7 @@ fn coordinates_vec_to_sorted_distance_vec(
         .iter()
         .map(|(&coords, &distance)| (coords, distance))
         .collect();
-    vec_map.sort_by(|a, b| a.1.cmp(&b.1));
+    vec_map.sort_by_key(|a| a.1);
     vec_map
 }
 

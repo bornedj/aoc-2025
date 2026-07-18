@@ -1,7 +1,7 @@
 pub mod puzz_one {
     pub fn puzzle_one(input: &str) -> usize {
         let coordinates = parse_input(input);
-        find_greatest_area(coordinates) as usize
+        find_greatest_area(coordinates)
     }
 
     fn find_greatest_area(coordinates: Vec<Coordinate>) -> usize {
@@ -54,8 +54,8 @@ pub mod puzz_one {
         fn area(&self, other: &Self) -> usize {
             // he inverts the coords to be a grid that indexes like a matrix
             // which makes the width and height inclusive
-            let width = (self.x - other.x).abs() as usize + 1;
-            let height = (self.y - other.y).abs() as usize + 1;
+            let width = (self.x - other.x).unsigned_abs() + 1;
+            let height = (self.y - other.y).unsigned_abs() + 1;
 
             width * height
         }
