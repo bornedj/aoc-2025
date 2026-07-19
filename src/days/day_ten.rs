@@ -43,25 +43,31 @@ pub fn puzzle_two(input: &str) -> u32 {
 pub fn puzzle_one(input: &str) -> u32 {
     let init_procedures = parse_init_procedures(input);
 
-    init_procedures.iter().map(|procedure| {
-        let mut set = HashSet::<Vec<bool>>::new();
-        set.insert(procedure.state.clone());
-        let mut count = 0;
-        loop {
-            set = set.into_iter().flat_map(|state| {
-                procedure.buttons.iter().map(move |button| {
-                    puzzle_one::push_button(state.clone(), button)
-                })
-            }).collect();
-            count += 1;
-            if set.contains(&procedure.target) {
-                break;
+    init_procedures
+        .iter()
+        .map(|procedure| {
+            let mut set = HashSet::<Vec<bool>>::new();
+            set.insert(procedure.state.clone());
+            let mut count = 0;
+            loop {
+                set = set
+                    .into_iter()
+                    .flat_map(|state| {
+                        procedure
+                            .buttons
+                            .iter()
+                            .map(move |button| puzzle_one::push_button(state.clone(), button))
+                    })
+                    .collect();
+                count += 1;
+                if set.contains(&procedure.target) {
+                    break;
+                }
             }
-        }
 
-        count
-    }).sum()
-
+            count
+        })
+        .sum()
 }
 
 fn parse_target_light_state(line: &str) -> Vec<bool> {
@@ -77,13 +83,12 @@ fn parse_target_light_state(line: &str) -> Vec<bool> {
 }
 
 fn parse_wiring_schematic(line: &str) -> WiringSchematics {
-    let str_wiring_schematic =
-        &line[(line.find('(').expect("must be end of light diagram"))
-            ..line
-                .find('{')
-                .expect("must be beginning of joltage requirement")]
-            .trim();
-     str_wiring_schematic
+    let str_wiring_schematic = &line[(line.find('(').expect("must be end of light diagram"))
+        ..line
+            .find('{')
+            .expect("must be beginning of joltage requirement")]
+        .trim();
+    str_wiring_schematic
         .split(' ')
         .map(|parts| parts.chars().filter_map(|c| c.to_digit(10)).collect())
         .collect()
@@ -92,12 +97,16 @@ fn parse_wiring_schematic(line: &str) -> WiringSchematics {
 fn parse_joltage(line: &str) -> JoltageRequirement {
     let str_joltage_requirement = &line[(line
         .find('{')
-        .expect("must be beginning joltage requirement") + 1)
+        .expect("must be beginning joltage requirement")
+        + 1)
         ..line.find('}').expect("must be end of joltage requirement")];
-         str_joltage_requirement
-            .split(',')
-            .map(|str| str.parse::<u32>().expect("should be a parseable int within joltage braces"))
-            .collect()
+    str_joltage_requirement
+        .split(',')
+        .map(|str| {
+            str.parse::<u32>()
+                .expect("should be a parseable int within joltage braces")
+        })
+        .collect()
 }
 
 fn parse_joltage_procedures(input: &str) -> Vec<JoltageProcedure> {
@@ -111,7 +120,7 @@ fn parse_joltage_procedures(input: &str) -> Vec<JoltageProcedure> {
             JoltageProcedure {
                 state,
                 target,
-                buttons
+                buttons,
             }
         })
         .collect()
@@ -169,13 +178,13 @@ mod tests {
             state: vec![false, false, false, false, false],
             target: vec![false, false, false, true, false],
             buttons: vec![
-                vec![0,2,3,4],
-                vec![2,3],
-                vec![0,4],
-                vec![0,1,2,],
-                vec![1,2,3,4],
+                vec![0, 2, 3, 4],
+                vec![2, 3],
+                vec![0, 4],
+                vec![0, 1, 2],
+                vec![1, 2, 3, 4],
             ],
-            joltage_requirement: vec![7,5,12,7,2],
+            joltage_requirement: vec![7, 5, 12, 7, 2],
         };
 
         assert_eq!(first, parse_init_procedures(EXAMPLE_INPUT)[0]);
@@ -203,9 +212,12 @@ mod tests {
     fn test_push_joltage_button() {
         let procedure = JoltageProcedure {
             state: vec![0; 4],
-            target: vec![1;4],
-            buttons: vec![vec![0,2]],
+            target: vec![1; 4],
+            buttons: vec![vec![0, 2]],
         };
-        assert_eq!(vec![1,0,1,0], push_button(procedure.state.clone(), &procedure.buttons[0]));
+        assert_eq!(
+            vec![1, 0, 1, 0],
+            push_button(procedure.state.clone(), &procedure.buttons[0])
+        );
     }
 }
