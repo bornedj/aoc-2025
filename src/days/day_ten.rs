@@ -1,5 +1,7 @@
 use std::collections::HashSet;
 
+use rayon::prelude::*;
+
 type WiringSchematics = Vec<Vec<u32>>;
 type JoltageRequirement = Vec<u32>;
 
@@ -38,7 +40,7 @@ fn push_button(mut state: JoltageRequirement, button: &JoltageRequirement) -> Jo
 pub fn puzzle_two(input: &str) -> u32 {
     let procedures = parse_joltage_procedures(input);
     procedures
-        .iter()
+        .par_iter()
         .enumerate()
         .map(|(id, procedure)| {
             println!("{id}, {procedure:?}");
