@@ -2,8 +2,8 @@ use std::collections::HashSet;
 
 use rayon::prelude::*;
 
-type WiringSchematics = Vec<Vec<u32>>;
-type JoltageRequirement = Vec<u32>;
+type WiringSchematics = Vec<Vec<usize>>;
+type JoltageRequirement = Vec<usize>;
 
 mod puzzle_one {
     #[derive(Debug, PartialEq)]
@@ -13,10 +13,9 @@ mod puzzle_one {
         pub buttons: super::WiringSchematics,
         pub joltage_requirement: super::JoltageRequirement,
     }
-    pub fn push_button(mut state: Vec<bool>, button: &Vec<u32>) -> Vec<bool> {
+    pub fn push_button(mut state: Vec<bool>, button: &Vec<usize>) -> Vec<bool> {
         for index in button {
-            let i: usize = *index as usize;
-            state[i] = !state[i];
+            state[*index] = !state[*index];
         }
         state
     }
@@ -31,13 +30,12 @@ struct JoltageProcedure {
 
 fn push_button(mut state: JoltageRequirement, button: &JoltageRequirement) -> JoltageRequirement {
     for index in button {
-        let i: usize = *index as usize;
-        state[i] += 1
+        state[*index] += 1
     }
     state
 }
 
-pub fn puzzle_two(input: &str) -> u32 {
+pub fn puzzle_two(input: &str) -> usize {
     let procedures = parse_joltage_procedures(input);
     procedures
         .par_iter()
@@ -74,7 +72,7 @@ pub fn puzzle_two(input: &str) -> u32 {
     .sum()
 }
 
-pub fn puzzle_one(input: &str) -> u32 {
+pub fn puzzle_one(input: &str) -> usize {
     let init_procedures = parse_init_procedures(input);
 
     init_procedures
@@ -124,7 +122,7 @@ fn parse_wiring_schematic(line: &str) -> WiringSchematics {
         .trim();
     str_wiring_schematic
         .split(' ')
-        .map(|parts| parts.chars().filter_map(|c| c.to_digit(10)).collect())
+        .map(|parts| parts.chars().filter_map(|c| c.to_digit(10)).map(|u_32| u_32 as usize).collect())
         .collect()
 }
 
@@ -137,7 +135,7 @@ fn parse_joltage(line: &str) -> JoltageRequirement {
     str_joltage_requirement
         .split(',')
         .map(|str| {
-            str.parse::<u32>()
+            str.parse::<usize>()
                 .expect("should be a parseable int within joltage braces")
         })
         .collect()
@@ -231,7 +229,7 @@ mod tests {
             state: vec![false, false],
             target: vec![true, true],
             buttons: vec![vec![0, 1]],
-            joltage_requirement: Vec::<u32>::new(),
+            joltage_requirement: Vec::<usize>::new(),
         };
         let result = puzzle_one::push_button(procedure.state.clone(), &procedure.buttons[0]);
         assert_eq!(vec![true, true], result);
