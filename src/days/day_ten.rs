@@ -20,8 +20,23 @@ mod puzzle_one {
     }
 }
 
+#[derive(Debug)]
+struct JoltageProcedure {
+    state: JoltageRequirement,
+    target: JoltageRequirement,
+    buttons: WiringSchematics,
+}
+
+fn push_button(mut state: JoltageRequirement, button: &JoltageRequirement) -> JoltageRequirement {
+    for index in button {
+        let i: usize = *index as usize;
+        state[i] += 1
+    }
+    state
+}
 
 pub fn puzzle_two(input: &str) -> u32 {
+    let procedures = parse_joltage_procedures(input);
     todo!()
 }
 
@@ -182,5 +197,15 @@ mod tests {
     #[test]
     fn test_puzzle_two() {
         assert_eq!(33, puzzle_two(EXAMPLE_INPUT));
+    }
+
+    #[test]
+    fn test_push_joltage_button() {
+        let procedure = JoltageProcedure {
+            state: vec![0; 4],
+            target: vec![1;4],
+            buttons: vec![vec![0,2]],
+        };
+        assert_eq!(vec![1,0,1,0], push_button(procedure.state.clone(), &procedure.buttons[0]));
     }
 }
