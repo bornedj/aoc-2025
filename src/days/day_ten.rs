@@ -2,20 +2,27 @@ use std::collections::HashSet;
 
 type WiringSchematics = Vec<Vec<u32>>;
 type JoltageRequirement = Vec<u32>;
-#[derive(Debug, PartialEq)]
-struct InitProcedure {
-    state: Vec<bool>,
-    target: Vec<bool>,
-    buttons: WiringSchematics,
-    joltage_requirement: JoltageRequirement,
+
+mod puzzle_one {
+    #[derive(Debug, PartialEq)]
+    pub struct InitProcedure {
+        pub state: Vec<bool>,
+        pub target: Vec<bool>,
+        pub buttons: super::WiringSchematics,
+        pub joltage_requirement: super::JoltageRequirement,
+    }
+    pub fn push_button(mut state: Vec<bool>, button: &Vec<u32>) -> Vec<bool> {
+        for index in button {
+            let i: usize = *index as usize;
+            state[i] = !state[i];
+        }
+        state
+    }
 }
 
-fn push_button(mut state: Vec<bool>, button: &Vec<u32>) -> Vec<bool> {
-    for index in button {
-        let i: usize = *index as usize;
-        state[i] = !state[i];
-    }
-    state
+
+pub fn puzzle_two(input: &str) -> u32 {
+    todo!()
 }
 
 pub fn puzzle_one(input: &str) -> u32 {
@@ -28,7 +35,7 @@ pub fn puzzle_one(input: &str) -> u32 {
         loop {
             set = set.into_iter().flat_map(|state| {
                 procedure.buttons.iter().map(move |button| {
-                    push_button(state.clone(), button)
+                    puzzle_one::push_button(state.clone(), button)
                 })
             }).collect();
             count += 1;
@@ -78,7 +85,7 @@ fn parse_joltage(line: &str) -> JoltageRequirement {
             .collect()
 }
 
-fn parse_init_procedures(input: &str) -> Vec<InitProcedure> {
+fn parse_init_procedures(input: &str) -> Vec<puzzle_one::InitProcedure> {
     input
         .lines()
         .map(|line| {
@@ -86,7 +93,7 @@ fn parse_init_procedures(input: &str) -> Vec<InitProcedure> {
             let wiring_schematic = parse_wiring_schematic(line);
             let joltage_requirement = parse_joltage(line);
 
-            InitProcedure {
+            puzzle_one::InitProcedure {
                 state: vec![false; target.len()],
                 target,
                 buttons: wiring_schematic,
@@ -98,9 +105,8 @@ fn parse_init_procedures(input: &str) -> Vec<InitProcedure> {
 
 #[cfg(test)]
 mod tests {
-    use std::vec;
 
-use super::*;
+    use super::*;
 
     const EXAMPLE_INPUT: &str = r#"[.##.] (3) (1,3) (2) (2,3) (0,2) (0,1) {3,5,4,7}
 [...#.] (0,2,3,4) (2,3) (0,4) (0,1,2) (1,2,3,4) {7,5,12,7,2}
@@ -113,7 +119,7 @@ use super::*;
 
     #[test]
     fn test_parse_input() {
-        let first = InitProcedure {
+        let first = puzzle_one::InitProcedure {
             state: vec![false, false, false, false],
             target: vec![false, true, true, false],
             buttons: vec![
@@ -127,7 +133,7 @@ use super::*;
             joltage_requirement: vec![3, 5, 4, 7],
         };
 
-        let second = InitProcedure {
+        let second = puzzle_one::InitProcedure {
             state: vec![false, false, false, false, false],
             target: vec![false, false, false, true, false],
             buttons: vec![
@@ -146,13 +152,18 @@ use super::*;
 
     #[test]
     fn test_push_button() {
-        let procedure = InitProcedure {
+        let procedure = puzzle_one::InitProcedure {
             state: vec![false, false],
             target: vec![true, true],
             buttons: vec![vec![0, 1]],
             joltage_requirement: Vec::<u32>::new(),
         };
-        let result = push_button(procedure.state.clone(), &procedure.buttons[0]);
+        let result = puzzle_one::push_button(procedure.state.clone(), &procedure.buttons[0]);
         assert_eq!(vec![true, true], result);
+    }
+
+    #[test]
+    fn test_puzzle_two() {
+        assert_eq!(33, puzzle_two(EXAMPLE_INPUT));
     }
 }
