@@ -28,48 +28,88 @@ struct JoltageProcedure {
     buttons: WiringSchematics,
 }
 
-fn push_button(mut state: JoltageRequirement, button: &JoltageRequirement) -> JoltageRequirement {
-    for index in button {
-        state[*index] += 1
-    }
-    state
-}
-
 pub fn puzzle_two(input: &str) -> usize {
     let procedures = parse_joltage_procedures(input);
+
     procedures
         .par_iter()
-        .enumerate()
-        .map(|(id, procedure)| {
-            println!("{id}, {procedure:?}");
-            let mut set = HashSet::<JoltageRequirement>::new();
-            set.insert(procedure.state.clone());
-            let mut i = 0;
-            loop {
-                if i % 1000 == 0 {
-                    println!("{i}, {id}");
-                }
-                set = set
-                    .into_iter()
-                    .flat_map(|state| {
-                        procedure.buttons.iter().map(move |button| {
-                            push_button(state.clone(), button)
-                        })
-                    })
-                    .filter(|state| {
-                        state.iter()
-                            .zip(procedure.target.iter())
-                            .all(|(a, b)| a <= b)
-                    })
-                    .collect();
-                i += 1;
-                if set.contains(&procedure.target) {
-                    break;
-                }
+        .map(|procedure| solve_joltage(procedure))
+        .sum()
+}
+
+fn solve_joltage(procedure: &JoltageProcedure) -> usize {
+    let mut best = usize::MAX;
+
+    let mut presses = vec![0usize; procedure.buttons.len()];
+
+    search_buttons(
+        procedure,
+        0,
+        &mut presses,
+        &mut best,
+    );
+
+    best
+}
+
+
+fn search_buttons(
+    procedure: &JoltageProcedure,
+    button_index: usize,
+    presses: &mut Vec<usize>,
+    best: &mut usize,
+) {
+    let current_presses: usize = presses.iter().sum();
+
+    // Already worse than a known solution
+    if current_presses >= *best {
+        return;
+    }
+
+
+    // All buttons assigned, test solution
+    if button_index == procedure.buttons.len() {
+        let mut state = procedure.state.clone();
+
+        for (button, count) in procedure.buttons.iter().zip(presses.iter()) {
+            for index in button {
+                state[*index] += count;
             }
-            i
-        })
-    .sum()
+        }
+
+
+        if state == procedure.target {
+            *best = current_presses;
+        }
+
+        return;
+    }
+
+
+    /*
+       A button cannot be pressed more times than the
+       largest remaining joltage requirement.
+    */
+    let max_press = procedure
+        .target
+        .iter()
+        .copied()
+        .max()
+        .unwrap();
+
+
+    for count in 0..=max_press {
+        presses[button_index] = count;
+
+        search_buttons(
+            procedure,
+            button_index + 1,
+            presses,
+            best,
+        );
+    }
+
+    presses[button_index] = 0;
 }
 
 pub fn puzzle_one(input: &str) -> usize {
