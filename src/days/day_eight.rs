@@ -84,7 +84,6 @@ fn find_last_junction<'a>(
                 false
             }
         }) {
-            println!("{:?}", coords);
             return *coords;
         }
     }
