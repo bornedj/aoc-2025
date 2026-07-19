@@ -104,8 +104,9 @@ fn main() -> Result<(), Box<dyn Error>> {
         let result = advent_of_code_2025::days::day_ten::puzzle_one(&file);
         println!("day ten - puzzle one {result}");
 
-        let result = advent_of_code_2025::days::day_ten::puzzle_two(&file);
-        println!("day ten - puzzle two {result}");
+        // DO NOT RUN: even a fully optimized solution takes forever
+        // let result = advent_of_code_2025::days::day_ten::puzzle_two(&file);
+        // println!("day ten - puzzle two {result}");
     }
     Ok(())
 }
