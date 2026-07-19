@@ -85,6 +85,23 @@ fn parse_joltage(line: &str) -> JoltageRequirement {
             .collect()
 }
 
+fn parse_joltage_procedures(input: &str) -> Vec<JoltageProcedure> {
+    input
+        .lines()
+        .map(|line| {
+            let target = parse_joltage(line);
+            let buttons = parse_wiring_schematic(line);
+            let state = vec![0; target.len()];
+
+            JoltageProcedure {
+                state,
+                target,
+                buttons
+            }
+        })
+        .collect()
+}
+
 fn parse_init_procedures(input: &str) -> Vec<puzzle_one::InitProcedure> {
     input
         .lines()
