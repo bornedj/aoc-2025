@@ -19,7 +19,7 @@ fn push_button(mut state: Vec<bool>, button: &Vec<u32>) -> Vec<bool> {
 }
 
 pub fn puzzle_one(input: &str) -> u32 {
-    let init_procedures = parse_input(input);
+    let init_procedures = parse_init_procedures(input);
 
     init_procedures.iter().map(|procedure| {
         let mut set = HashSet::<Vec<bool>>::new();
@@ -42,39 +42,50 @@ pub fn puzzle_one(input: &str) -> u32 {
 
 }
 
-fn parse_input(input: &str) -> Vec<InitProcedure> {
+fn parse_target_light_state(line: &str) -> Vec<bool> {
+    let str_light_diagram = &line[..line.find(']').expect("must be light diagram ]")];
+    str_light_diagram[1..]
+        .chars()
+        .map(|c| match c {
+            '.' => false,
+            '#' => true,
+            _ => panic!("unexpected light diagram char"),
+        })
+        .collect()
+}
+
+fn parse_wiring_schematic(line: &str) -> WiringSchematics {
+    let str_wiring_schematic =
+        &line[(line.find('(').expect("must be end of light diagram"))
+            ..line
+                .find('{')
+                .expect("must be beginning of joltage requirement")]
+            .trim();
+     str_wiring_schematic
+        .split(' ')
+        .map(|parts| parts.chars().filter_map(|c| c.to_digit(10)).collect())
+        .collect()
+}
+
+fn parse_joltage(line: &str) -> JoltageRequirement {
+    let str_joltage_requirement = &line[(line
+        .find('{')
+        .expect("must be beginning joltage requirement") + 1)
+        ..line.find('}').expect("must be end of joltage requirement")];
+         str_joltage_requirement
+            .split(',')
+            .map(|str| str.parse::<u32>().expect("should be a parseable int within joltage braces"))
+            .collect()
+}
+
+fn parse_init_procedures(input: &str) -> Vec<InitProcedure> {
     input
         .lines()
         .map(|line| {
-            let str_light_diagram = &line[..line.find(']').expect("must be light diagram ]")];
-            let target: Vec<bool> = str_light_diagram[1..]
-                .chars()
-                .map(|c| match c {
-                    '.' => false,
-                    '#' => true,
-                    _ => panic!("unexpected light diagram char"),
-                })
-                .collect();
+            let target = parse_target_light_state(line);
+            let wiring_schematic = parse_wiring_schematic(line);
+            let joltage_requirement = parse_joltage(line);
 
-            let str_wiring_schematic =
-                &line[(line.find('(').expect("must be end of light diagram"))
-                    ..line
-                        .find('{')
-                        .expect("must be beginning of joltage requirement")]
-                    .trim();
-            let wiring_schematic = str_wiring_schematic
-                .split(' ')
-                .map(|parts| parts.chars().filter_map(|c| c.to_digit(10)).collect())
-                .collect();
-
-            let str_joltage_requirement = &line[(line
-                .find('{')
-                .expect("must be beginning joltage requirement") + 1)
-                ..line.find('}').expect("must be end of joltage requirement")];
-            let joltage_requirement = str_joltage_requirement
-                .split(',')
-                .map(|str| str.parse::<u32>().expect("should be a parseable int within joltage braces"))
-                .collect();
             InitProcedure {
                 state: vec![false; target.len()],
                 target,
@@ -129,8 +140,8 @@ use super::*;
             joltage_requirement: vec![7,5,12,7,2],
         };
 
-        assert_eq!(first, parse_input(EXAMPLE_INPUT)[0]);
-        assert_eq!(second, parse_input(EXAMPLE_INPUT)[1]);
+        assert_eq!(first, parse_init_procedures(EXAMPLE_INPUT)[0]);
+        assert_eq!(second, parse_init_procedures(EXAMPLE_INPUT)[1]);
     }
 
     #[test]
