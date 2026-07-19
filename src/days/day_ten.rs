@@ -37,7 +37,39 @@ fn push_button(mut state: JoltageRequirement, button: &JoltageRequirement) -> Jo
 
 pub fn puzzle_two(input: &str) -> u32 {
     let procedures = parse_joltage_procedures(input);
-    todo!()
+    procedures
+        .iter()
+        .enumerate()
+        .map(|(id, procedure)| {
+            println!("{id}, {procedure:?}");
+            let mut set = HashSet::<JoltageRequirement>::new();
+            set.insert(procedure.state.clone());
+            let mut i = 0;
+            loop {
+                if i % 1000 == 0 {
+                    println!("{i}, {id}");
+                }
+                set = set
+                    .into_iter()
+                    .flat_map(|state| {
+                        procedure.buttons.iter().map(move |button| {
+                            push_button(state.clone(), button)
+                        })
+                    })
+                    .filter(|state| {
+                        state.iter()
+                            .zip(procedure.target.iter())
+                            .all(|(a, b)| a <= b)
+                    })
+                    .collect();
+                i += 1;
+                if set.contains(&procedure.target) {
+                    break;
+                }
+            }
+            i
+        })
+    .sum()
 }
 
 pub fn puzzle_one(input: &str) -> u32 {
